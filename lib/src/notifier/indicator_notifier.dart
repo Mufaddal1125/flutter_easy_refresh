@@ -147,6 +147,8 @@ abstract class IndicatorNotifier extends ChangeNotifier {
   /// The current scroll position.
   ScrollMetrics get position => _position!;
 
+  bool get hasPosition => _position != null;
+
   set position(ScrollMetrics value) {
     if (value.isNestedOuter) {
       _viewportDimension = value.viewportDimension;
@@ -439,7 +441,13 @@ abstract class IndicatorNotifier extends ChangeNotifier {
       return Future.value();
     }
     if (!force) {
-      if (modeLocked || noMoreLocked || secondaryLocked || !_canProcess) {
+      var hasClients = scrollController == null || scrollController.hasClients;
+      if (modeLocked ||
+          noMoreLocked ||
+          secondaryLocked ||
+          !_canProcess ||
+          !hasPosition ||
+          !hasClients) {
         return Future.value();
       }
     } else {
